@@ -57,10 +57,15 @@ window.addEventListener("DOMContentLoaded", function() {
   // валидация полей с телефоном
 
   const getFigures = () => {
-    const patternPhone = /[^0-9\+]/;
+    const patternPhone = /[^0-9\+]/,
+          distance = document.querySelector('.distance'),
+          figuresPattern = /[^0-9]/;
     document.querySelector('body').addEventListener('input', (event) => {
       if(event.target.name === 'user_phone') {
         event.target.value = event.target.value.replace(patternPhone, '');
+      };
+      if(event.target === distance) {
+        event.target.value = event.target.value.replace(figuresPattern, '');
       };
     });
   };
@@ -123,7 +128,7 @@ window.addEventListener("DOMContentLoaded", function() {
             count = 0;
 
         parentPanel.children[1].classList.remove('in');
-        console.log(parentPanel)
+        // console.log(parentPanel)
 
         for(let i=0; i < panels.length; i++) {
           if(panels[i] === parentPanel) {
@@ -150,8 +155,9 @@ window.addEventListener("DOMContentLoaded", function() {
           distance = document.querySelector('.distance'),
           paymentBtn = document.querySelector('.payment'),
           calcResult = document.getElementById('calc-result'),
-          label = document.querySelectorAll('.onoffswitch-label');
-
+          label = document.querySelectorAll('.onoffswitch-label'),
+          popupDiscount = document.querySelector('.popup-discount');
+    calcResult.value = '';
     
     paymentBtn.addEventListener('click', (event) => {
       let total = 0,
@@ -160,6 +166,7 @@ window.addEventListener("DOMContentLoaded", function() {
       if(label[0].matches('.two')) {
         typeValue = 15000;
       };
+
       total = typeValue;
       if(diameter.selectedIndex === 1) {
         total = total + ((typeValue / 100) * 20);
@@ -167,10 +174,10 @@ window.addEventListener("DOMContentLoaded", function() {
 
       if(rings.selectedIndex === 1) { 
         total = total + ((typeValue / 100) * 30); 
-        console.log(total)  
+        // console.log(total)  
       } else if(rings.selectedIndex === 2) {
         total = total + ((typeValue / 100) * 50);  
-        console.log(total)
+        // console.log(total)
       }
 
       if(diameter2.selectedIndex === 1) {
@@ -179,26 +186,205 @@ window.addEventListener("DOMContentLoaded", function() {
 
       if(rings2.selectedIndex === 1) { 
         total = total + ((typeValue / 100) * 30); 
-        console.log(total)  
       } else if(rings2.selectedIndex === 2) {
         total = total + ((typeValue / 100) * 50);  
-        console.log(total)
       }
-      console.log(type)
+      
       if(!label[1].classList.contains('two') && label[0].classList.contains('two')) {
         total = total + 2000;
       } else if(!label[1].classList.contains('two') && !label[0].classList.contains('two')) {
         total = total + 1000;
       };
-      console.log(total)
+      
       calcResult.value = total;
-
-      diameter.selectedIndex = 0;
+      popupDiscount.style.display = 'block';
+      diameter1.selectedIndex = 0;
       rings.selectedIndex = 0;
       diameter2.selectedIndex = 0;
       rings2.selectedIndex = 0;
-      // console.log(type.contentText)
+      distance.value = '';
     }) 
   };
   calc();
+  
+  // отправка ajax формы
+
+  const sendForm = () => {
+    const loadMessage = 'Идет загрузка...',
+          succesMessage = 'Данные успешно отправлены',
+          errorMessage = 'Произошла ошибка',
+          mainForm = document.querySelector('.main-form'),
+          statusMessage = document.createElement('div'),
+          captureForm = document.querySelectorAll('.capture-form'),
+          directorForm = document.querySelector('.director-form'),
+          popupConsultation = document.querySelector('.popup-consultation');
+    
+    mainForm.children[3].removeAttribute('required');
+    mainForm.children[3].value = '';
+    mainForm.children[3].addEventListener('input', () => {
+      mainForm.children[3].setAttribute('required', '');
+    })
+    mainForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if(mainForm.children[3].value === '') {
+        mainForm.children[3].setAttribute('required', '');
+        return;
+      }
+     
+      mainForm.appendChild(statusMessage);
+      statusMessage.style.cssText = `font-size: 2rem;
+                                    color: #85be32;
+                                    font-weight: bold;`
+
+      const request = new XMLHttpRequest();
+
+      request.addEventListener('readystatechange', () => {
+        
+        statusMessage.textContent = loadMessage;
+        
+        if(request.readyState !== 4) {
+          return;
+        }
+        
+        if(request.readyState === 4 && request.status === 200) {
+          
+          statusMessage.textContent = succesMessage;
+          mainForm.children[3].value = '';
+          mainForm.children[3].removeAttribute('required');
+          
+        } else {
+          statusMessage.textContent = errorMessage;
+        };
+      });
+      
+      request.open('POST', './server.php', true);
+
+      request.setRequestHeader('Content-Type', 'application/json');
+
+      const formData = new FormData(mainForm);
+      let body = {};
+
+      formData.forEach((val, key) => {
+        body[key] = val;
+      })
+      request.send(JSON.stringify(body));
+
+    });
+
+    captureForm.forEach((item) => {
+      item.children[1].removeAttribute('required');
+      item.children[1].value = '';
+      item.children[3].removeAttribute('required');
+      item.children[3].value = '';
+      item.children[1].addEventListener('input', () => {
+        item.children[1].setAttribute('required', '');
+      });
+
+      item.children[3].addEventListener('input', () => {
+        item.children[3].setAttribute('required', '');
+      });
+
+      item.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if(item.children[3].value === '' || item.children[1].value === '') {
+          item.children[1].setAttribute('required', '');
+          item.children[3].setAttribute('required', '');
+          return;
+        }
+       
+        item.appendChild(statusMessage);
+        statusMessage.style.cssText = `font-size: 2rem;
+                                      color: #85be32;
+                                      font-weight: bold;`
+  
+        const request = new XMLHttpRequest();
+  
+        request.addEventListener('readystatechange', () => {
+          
+          statusMessage.textContent = loadMessage;
+          
+          if(request.readyState !== 4) {
+            return;
+          }
+          
+          if(request.readyState === 4 && request.status === 200) {
+            
+            statusMessage.textContent = succesMessage;
+            item.children[1].value = '';
+            item.children[3].value = '';
+            item.children[1].removeAttribute('required');
+            item.children[3].removeAttribute('required');
+            
+          } else {
+            statusMessage.textContent = errorMessage;
+          };
+        });
+        
+        request.open('POST', './server.php', true);
+  
+        request.setRequestHeader('Content-Type', 'application/json');
+  
+        const formData = new FormData(item);
+        let body = {};
+  
+        formData.forEach((val, key) => {
+          body[key] = val;
+        })
+        request.send(JSON.stringify(body));
+  
+      });
+    })
+    directorForm.children[0].removeAttribute('required');
+      directorForm.children[0].value = '';
+    directorForm.children[0].addEventListener('input', () => {
+      directorForm.children[0].setAttribute('required', '');
+    });
+      
+    directorForm.addEventListener('submit', () => {
+      event.preventDefault();
+
+      if(directorForm.children[0].value === '') {
+        directorForm.children[0].setAttribute('required', '');
+        return;
+      }
+      
+      directorForm.appendChild(statusMessage);
+      statusMessage.style.cssText = `font-size: 2rem;
+                                    color: #85be32;
+                                    font-weight: bold;`
+
+      const request = new XMLHttpRequest();
+
+      request.addEventListener('readystatechange', () => {
+        
+        statusMessage.textContent = loadMessage;
+        
+        if(request.readyState !== 4) {
+          return;
+        }
+        
+        if(request.readyState === 4 && request.status === 200) {
+          statusMessage.textContent = succesMessage;
+          popupConsultation.style.display = 'block';
+          directorForm.children[0].value = '';
+          directorForm.children[0].removeAttribute('required');
+        } else {
+          statusMessage.textContent = errorMessage;
+        };
+      });
+      
+      request.open('POST', './server.php', true);
+
+      request.setRequestHeader('Content-Type', 'application/json');
+
+      const formData = new FormData(directorForm);
+      let body = {};
+
+      formData.forEach((val, key) => {
+        body[key] = val;
+      })
+      request.send(JSON.stringify(body));
+    });
+  };
+  sendForm();
 });
