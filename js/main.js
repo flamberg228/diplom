@@ -88,18 +88,22 @@ window.addEventListener("DOMContentLoaded", function() {
   const accordions = () => {
     const body = document.querySelector('body'),
           panels = document.querySelectorAll('.panel');
-          
+    
+    document.querySelectorAll('.panel-heading').forEach((item) => {
+      item.style.cursor = 'pointer';
+    })      
     body.addEventListener('click', (event) => {
       let target = event.target;
      
 
-      target = target.closest('.collapsed')
+      target = target.closest('.panel-heading')
 
       // закрытие всех других аккордеонов при включении другого
       
       if(target) {
         event.preventDefault();
-        let parentPanel = target.parentNode.parentNode.parentNode;
+        let parentPanel = target.parentNode;
+        // console.log(parentPanel)
         parentPanel.children[1].classList.toggle('in');
 
         for(let i=0; i < panels.length; i++) {
@@ -112,34 +116,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
     // закрытие предыдущего аккордеона при нажатии кнопки и включение следующего
 
-    document.querySelector('.constructor').addEventListener('click', (event) => {
-      let target = event.target;
-      target = target.closest('.onoffswitch-label')
-      if(target) {
-        document.querySelector('.second-well').classList.toggle('empty');
-        target.classList.toggle('two');
-      }
-      target = event.target;
-      target = target.closest('.construct-btn')
 
-      if(target) {
-        event.preventDefault();
-        let parentPanel = target.parentNode.parentNode.parentNode,
-            count = 0;
-
-        parentPanel.children[1].classList.remove('in');
-        // console.log(parentPanel)
-
-        for(let i=0; i < panels.length; i++) {
-          if(panels[i] === parentPanel) {
-            count = i;
-            break;
-          };
-        };  
-        panels[count+1].children[1].classList.add('in');
-        panels[4].children[1].classList.remove('in');
-      };
-    });
   };
   accordions();
 
@@ -156,10 +133,15 @@ window.addEventListener("DOMContentLoaded", function() {
           paymentBtn = document.querySelector('.payment'),
           calcResult = document.getElementById('calc-result'),
           label = document.querySelectorAll('.onoffswitch-label'),
-          popupDiscount = document.querySelector('.popup-discount');
+          popupDiscount = document.querySelector('.popup-discount'),
+          panels = document.querySelectorAll('.panel');
     calcResult.value = '';
-    
-    paymentBtn.addEventListener('click', (event) => {
+    diameter.selectedIndex = 0;
+    rings.selectedIndex = 0;
+    diameter2.selectedIndex = 0;
+    rings2.selectedIndex = 0;
+    distance.value = '';
+    const countSum = () => {
       let total = 0,
         typeValue = 10000;
 
@@ -174,10 +156,8 @@ window.addEventListener("DOMContentLoaded", function() {
 
       if(rings.selectedIndex === 1) { 
         total = total + ((typeValue / 100) * 30); 
-        // console.log(total)  
       } else if(rings.selectedIndex === 2) {
         total = total + ((typeValue / 100) * 50);  
-        // console.log(total)
       }
 
       if(diameter2.selectedIndex === 1) {
@@ -197,13 +177,62 @@ window.addEventListener("DOMContentLoaded", function() {
       };
       
       calcResult.value = total;
+    }
+    
+    // document.querySelector('.constructor').addEventListener('change', (event) => {
+    //   const target = event.target;
+
+
+    // });
+    document.querySelector('.constructor').addEventListener('click', (event) => {
+      let target = event.target;
+
+      target = target.closest('.onoffswitch-label')
+      if(target) {
+        document.querySelector('.second-well').classList.toggle('empty');
+        target.classList.toggle('two');
+        countSum();
+      }
+        
+      target = event.target;
+      target = target.closest('.construct-btn')
+
+      if(target) {
+        event.preventDefault();
+        countSum();
+        let parentPanel = target.parentNode.parentNode.parentNode,
+            count = 0;
+
+        parentPanel.children[1].classList.remove('in');
+        // console.log(parentPanel)
+
+        for(let i=0; i < panels.length; i++) {
+          if(panels[i] === parentPanel) {
+            count = i;
+            break;
+          };
+        };  
+        panels[count+1].children[1].classList.add('in');
+        panels[4].children[1].classList.remove('in');
+      };
+    });
+
+    // document.querySelector('.constructor > input')
+    document.querySelector('.constructor').addEventListener('change', (event) => {
+      const target = event.target;
+
+      if(target.tagName === 'SELECT' || target.tagName === 'SPAN') {
+        countSum();
+      }
+    })
+    
+    paymentBtn.addEventListener('click', () => {
+
+      countSum();
+      
       popupDiscount.style.display = 'block';
-      diameter1.selectedIndex = 0;
-      rings.selectedIndex = 0;
-      diameter2.selectedIndex = 0;
-      rings2.selectedIndex = 0;
-      distance.value = '';
-    }) 
+     
+    }); 
   };
   calc();
   
@@ -305,7 +334,7 @@ window.addEventListener("DOMContentLoaded", function() {
           
           if(request.readyState !== 4) {
             return;
-          }
+          };
           
           if(request.readyState === 4 && request.status === 200) {
             
@@ -326,7 +355,24 @@ window.addEventListener("DOMContentLoaded", function() {
   
         const formData = new FormData(item);
         let body = {};
-  
+        
+        if(document.getElementById('calc-result').value !== '') {
+          body['diameter'] = document.querySelectorAll('.form-control')[0].value;
+          body['rings'] = document.querySelectorAll('.form-control')[1].value;
+          if(document.querySelectorAll('.onoffswitch-label')[0].classList.contains('two')) {
+            body['diameter2'] = document.querySelectorAll('.form-control')[2].value;
+            body['rings2'] = document.querySelectorAll('.form-control')[3].value;
+          }
+          body['result'] = document.getElementById('calc-result').value;
+          body['distance'] = document.querySelector('.distance').value;
+          
+          document.querySelectorAll('.form-control')[0].selectedIndex = 0;
+          document.querySelectorAll('.form-control')[1].selectedIndex = 0;
+          document.querySelectorAll('.form-control')[2].selectedIndex = 0;
+          document.querySelectorAll('.form-control')[3].selectedIndex = 0;
+          document.querySelector('.distance').value = '';
+        }
+
         formData.forEach((val, key) => {
           body[key] = val;
         })
