@@ -41,7 +41,13 @@ const popupCalls = () => {
       columns[4].classList.toggle('hidden');
       addSentence.setAttribute('style', 'display: none;')
     };
-
+    if(target.classList.contains('director-btn')) {
+      event.preventDefault();
+      if(document.querySelector('.director-form').children[0].value !== '') {
+        popupConsultation.style.display = 'block';
+      }
+     
+    }
     if(target.classList.contains('check-btn')) {
       popupCheck.style.display = 'block';
     }

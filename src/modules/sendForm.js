@@ -132,6 +132,14 @@ const sendForm = () => {
         document.querySelectorAll('.form-control')[3].selectedIndex = 0;
         document.querySelector('.distance').value = '';
       }
+      if(directorForm.children[0].value !== '' && popupConsultation.style.display === 'block') {
+        // directorForm.addEventListener('submit', (event) => {
+        //   event.preventDefault();
+        // });
+        body['question'] = directorForm.children[0].value;
+        directorForm.children[0].value = '';
+        directorForm.children[0].removeAttribute('required');
+      }
 
       formData.forEach((val, key) => {
         body[key] = val;
@@ -146,51 +154,6 @@ const sendForm = () => {
   directorForm.children[0].setAttribute('required', '');
   });
     
-  directorForm.addEventListener('submit', () => {
-    event.preventDefault();
-
-    if(directorForm.children[0].value === '') {
-      directorForm.children[0].setAttribute('required', '');
-      return;
-    }
-    
-    directorForm.appendChild(statusMessage);
-    statusMessage.style.cssText = `font-size: 2rem;
-                                  color: #85be32;
-                                  font-weight: bold;`
-
-    const request = new XMLHttpRequest();
-
-    request.addEventListener('readystatechange', () => {
-      
-      statusMessage.textContent = loadMessage;
-      
-      if(request.readyState !== 4) {
-        return;
-      }
-      
-      if(request.readyState === 4 && request.status === 200) {
-        statusMessage.textContent = succesMessage;
-        popupConsultation.style.display = 'block';
-        directorForm.children[0].value = '';
-        directorForm.children[0].removeAttribute('required');
-      } else {
-        statusMessage.textContent = errorMessage;
-      };
-    });
-    
-    request.open('POST', './server.php', true);
-
-    request.setRequestHeader('Content-Type', 'application/json');
-
-    const formData = new FormData(directorForm);
-    let body = {};
-
-    formData.forEach((val, key) => {
-      body[key] = val;
-    })
-    request.send(JSON.stringify(body));
-  });
 };
 
 export default sendForm;
