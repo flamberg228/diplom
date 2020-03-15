@@ -38,6 +38,9 @@ const sendForm = () => {
       if(request.readyState === 4 && request.status === 200) {
         
         statusMessage.textContent = succesMessage;
+        setTimeout(() =>{
+          mainForm.removeChild(statusMessage);
+        }, 5000);
         mainForm.children[3].value = '';
         mainForm.children[3].removeAttribute('required');
         
@@ -99,6 +102,11 @@ const sendForm = () => {
         if(request.readyState === 4 && request.status === 200) {
           
           statusMessage.textContent = succesMessage;
+          
+          setTimeout(() =>{
+            item.removeChild(statusMessage);
+          }, 5000);
+         
           item.children[1].value = '';
           item.children[3].value = '';
           item.children[1].removeAttribute('required');

@@ -43,7 +43,7 @@ const popupCalls = () => {
     };
     if(target.classList.contains('director-btn')) {
       event.preventDefault();
-      document.querySelector('.director-form').children[0].setAttribute('required', '')
+      document.querySelector('.director-form').children[0].setAttribute('required', '');
       if(document.querySelector('.director-form').children[0].value !== '') {
         popupConsultation.style.display = 'block';
       }
