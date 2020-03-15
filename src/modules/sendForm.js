@@ -133,9 +133,6 @@ const sendForm = () => {
         document.querySelector('.distance').value = '';
       }
       if(directorForm.children[0].value !== '' && popupConsultation.style.display === 'block') {
-        // directorForm.addEventListener('submit', (event) => {
-        //   event.preventDefault();
-        // });
         body['question'] = directorForm.children[0].value;
         directorForm.children[0].value = '';
         directorForm.children[0].removeAttribute('required');
