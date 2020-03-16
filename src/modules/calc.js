@@ -58,13 +58,20 @@ const calc = () => {
   document.querySelector('.constructor').addEventListener('click', (event) => {
     let target = event.target;
 
-    target = target.closest('.onoffswitch-label')
+    target = target.closest('.onoffswitch-label-1')
     if(target) {
       document.querySelector('.second-well').classList.toggle('empty');
       target.classList.toggle('two');
+      document.querySelectorAll('.form-control')[2].selectedIndex = 0;
+      document.querySelectorAll('.form-control')[3].selectedIndex = 0;
       countSum();
     }
-      
+    target = event.target;
+    target = target.closest('.onoffswitch-label-2')
+    if(target) {
+      target.classList.toggle('two');
+      countSum();
+    }
     target = event.target;
     target = target.closest('.construct-btn')
 
@@ -98,7 +105,7 @@ const calc = () => {
   paymentBtn.addEventListener('click', () => {
 
     countSum();
-    
+    paymentBtn.classList.add('calcked');
     popupDiscount.style.display = 'block';
    
   }); 

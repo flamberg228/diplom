@@ -23,11 +23,13 @@ const popupCalls = () => {
 
     if(target.classList.contains('popup-close')) {
       target.parentNode.parentNode.parentNode.parentNode.style.display = 'none';
+      document.querySelector('.payment').classList.remove('calcked');
     } 
 
     if(target.classList.contains('popup')) {
       document.querySelectorAll('.popup').forEach((item) => {
         item.style.display = 'none';
+        document.querySelector('.payment').classList.remove('calcked');
       });
     };
     

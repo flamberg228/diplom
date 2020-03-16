@@ -124,7 +124,7 @@ const sendForm = () => {
       const formData = new FormData(item);
       let body = {};
       
-      if(document.getElementById('calc-result').value !== '') {
+      if(document.getElementById('calc-result').value !== '' && document.querySelector('.payment').classList.contains('calcked')) {
         body['diameter'] = document.querySelectorAll('.form-control')[0].value;
         body['rings'] = document.querySelectorAll('.form-control')[1].value;
         if(document.querySelectorAll('.onoffswitch-label')[0].classList.contains('two')) {
