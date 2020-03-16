@@ -17,6 +17,7 @@ const calc = () => {
   diameter2.selectedIndex = 0;
   rings2.selectedIndex = 0;
   distance.value = '';
+
   const countSum = () => {
     let total = 0,
       typeValue = 10000;
